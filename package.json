@@ -13,6 +13,7 @@
     "dev": "concurrently \"npm run server\" \"npm run vite\""
   },
   "dependencies": {
+    "concurrently": "^9.2.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^4.19.0",
@@ -20,7 +21,6 @@
     "mongoose": "^9.6.1"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1",
     "nodemon": "^3.1.14",
     "vite": "^8.0.10"
   }
