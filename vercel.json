@@ -17,8 +17,20 @@
       "dest": "backend/server.js"
     },
     {
+      "src": "/dashboard.html",
+      "dest": "/dashboard.html"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/images/(.*)",
+      "dest": "/images/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "$1"
+      "dest": "/index.html"
     }
   ]
 }
