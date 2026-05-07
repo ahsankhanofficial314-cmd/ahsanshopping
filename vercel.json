@@ -1,18 +1,17 @@
 {
   "version": 2,
-  "functions": {
-    "api/index.js": {
-      "runtime": "@vercel/node"
-    }
-  },
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/index.js"
+      "source": "/api/auth/signup",
+      "destination": "/api/auth/signup.js"
     },
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "source": "/api/auth/login",
+      "destination": "/api/auth/login.js"
+    },
+    {
+      "source": "/api/products",
+      "destination": "/api/products.js"
     }
   ]
 }
