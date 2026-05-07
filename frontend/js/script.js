@@ -88,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
             renderProducts(allProducts);
         } catch (error) {
             filterGrid.innerHTML = '<p class="text-center w-100" style="grid-column: 1/-1;">Failed to load products. Make sure the backend server is running.</p>';
-            console.error("Error loading products:", error);
             alert("Error loading products: " + error.message);
         }
     }
@@ -557,9 +556,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     formSignup.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const signupBtn = formSignup.querySelector('button[type="submit"]');
+        const originalText = signupBtn.innerHTML;
+        
         const name = document.getElementById('signupName').value;
         const email = formSignup.querySelector('input[type="email"]').value;
         const password = formSignup.querySelector('input[type="password"]').value;
+        
+        signupBtn.disabled = true;
+        signupBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Creating Account...`;
         
         try {
             const res = await fetch(`${API_BASE}/api/auth/signup`, {
@@ -574,11 +579,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 authModal.classList.remove('active');
             } else {
                 alert("Signup failed: " + (data.error || "Unknown error"));
-                console.error(data.error || "Signup failed");
             }
         } catch(err) { 
-            alert("Network error during signup. Is the backend server running?");
-            console.error(err); 
+            alert("Network error during signup. Please try again.");
+        } finally {
+            signupBtn.disabled = false;
+            signupBtn.innerHTML = originalText;
         }
     });
 
@@ -602,8 +608,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert("Login failed: " + (data.error || "Invalid credentials"));
             }
         } catch(err) { 
-            alert("Network error during login. Is the backend server running?");
-            console.error(err); 
+            alert("Network error during login. Please try again.");
         }
     });
 

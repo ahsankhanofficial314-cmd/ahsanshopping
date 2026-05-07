@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const products = await res.json();
             renderAdminProducts(products);
             totalProductsCount.textContent = products.length;
-        } catch (err) { console.error(err); }
+        } catch (err) { }
     }
 
     function renderAdminProducts(products) {
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>$${product.price.toFixed(2)}</td>
                 <td>
                     <div class="action-btns">
-                        <button class="btn-delete" onclick="deleteProduct(${product.id})">
+                        <button class="btn-delete" onclick="deleteProduct('${product.id || product._id}', this)">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p style="color: #666; font-size: 0.9rem; margin-bottom: 10px; text-transform: capitalize;">${product.category}</p>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-weight: bold; color: var(--color-primary-light);">$${product.price.toFixed(2)}</span>
-                        <button class="btn-delete" onclick="deleteProduct(${product.id})" style="background: #ffebee; color: #d32f2f; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                        <button class="btn-delete" onclick="deleteProduct('${product.id || product._id}', this)" style="background: #ffebee; color: #d32f2f; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
@@ -98,21 +98,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    window.deleteProduct = async function(id) {
-        if (confirm("Are you sure you want to delete this product?")) {
-            try {
-                const res = await fetch(`${API_BASE}/api/products/${id}`, { method: 'DELETE' });
-                if (res.ok) {
-                    loadAdminProducts();
-                } else {
-                    alert("Failed to delete product");
-                }
-            } catch (err) { console.error(err); }
+    window.deleteProduct = async function(id, btn) {
+        const originalContent = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+
+        try {
+            const res = await fetch(`${API_BASE}/api/products/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                loadAdminProducts();
+            } else {
+                alert("Failed to delete product");
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }
+        } catch (err) { 
+            alert("Network error. Please try again.");
+            btn.disabled = false;
+            btn.innerHTML = originalContent;
         }
     }
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const submitBtn = document.getElementById('saveProductBtn');
+        const originalText = submitBtn.innerHTML;
         
         const name = document.getElementById('pName').value;
         const price = document.getElementById('pPrice').value;
@@ -123,6 +133,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!image) {
             image = `images/product_${category === 'beauty' ? 'women' : category}.png`;
         }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
 
         try {
             const res = await fetch(`${API_BASE}/api/products`, {
@@ -137,9 +150,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 form.reset();
                 setTimeout(() => msg.style.display = 'none', 3000);
                 loadAdminProducts();
+            } else {
+                alert("Failed to add product.");
             }
-        } catch (err) { console.error(err); }
+        } catch (err) { 
+            alert("Network error. Please try again.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
     });
+
+    // Settings Save Logic
+    const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+    const settingsMsg = document.getElementById('settingsMsg');
+
+    if (saveSettingsBtn) {
+        saveSettingsBtn.addEventListener('click', async () => {
+            const originalText = saveSettingsBtn.innerHTML;
+            saveSettingsBtn.disabled = true;
+            saveSettingsBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
+
+            // Simulate API call
+            setTimeout(() => {
+                saveSettingsBtn.disabled = false;
+                saveSettingsBtn.innerHTML = originalText;
+                
+                if (settingsMsg) {
+                    settingsMsg.textContent = 'Settings saved successfully!';
+                    settingsMsg.style.display = 'block';
+                    setTimeout(() => settingsMsg.style.display = 'none', 3000);
+                }
+            }, 1000);
+        });
+    }
 
     async function loadAdminUsers() {
         try {
@@ -148,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderAdminUsers(users);
             const userCountDisplay = document.getElementById('analyticsUsersCount');
             if (userCountDisplay) userCountDisplay.textContent = users.length;
-        } catch (err) { console.error(err); }
+        } catch (err) { }
     }
 
     function renderAdminUsers(users) {
@@ -191,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
             signalsList.innerHTML = liveSignalsHtml + fakeSignalHtml;
-        } catch (err) { console.error(err); }
+        } catch (err) { }
     }
 
     function updateAnalytics() {

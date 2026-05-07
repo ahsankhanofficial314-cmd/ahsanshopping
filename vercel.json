@@ -25,6 +25,22 @@
       "dest": "api/products.js"
     },
     {
+      "src": "/api/products/(?<id>[^/]*)",
+      "dest": "api/products/[id].js"
+    },
+    {
+      "src": "/api/users",
+      "dest": "api/users.js"
+    },
+    {
+      "src": "/api/signals",
+      "dest": "api/signals.js"
+    },
+    {
+      "src": "/api/checkout",
+      "dest": "api/checkout.js"
+    },
+    {
       "handle": "filesystem"
     },
     {

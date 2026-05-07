@@ -9,6 +9,22 @@ export default async function handler(req, res) {
         } catch (err) {
             return res.status(500).json({ error: "Failed to fetch products" });
         }
+    } else if (req.method === 'POST') {
+        try {
+            const { name, price, category, description, image } = req.body;
+            const newProduct = new Product({
+                id: Date.now(),
+                name,
+                price: parseFloat(price),
+                category,
+                description,
+                image
+            });
+            await newProduct.save();
+            return res.status(201).json(newProduct);
+        } catch (err) {
+            return res.status(500).json({ error: "Failed to add product" });
+        }
     }
     return res.status(405).json({ error: "Method not allowed" });
 }

@@ -96,6 +96,39 @@ app.get('/api/products', async (req, res) => {
     } catch (err) { res.status(500).json({ error: "Failed to fetch products" }); }
 });
 
+app.post('/api/products', async (req, res) => {
+    try {
+        const { name, price, category, description, image } = req.body;
+        const newProduct = new Product({
+            id: Date.now(),
+            name,
+            price: parseFloat(price),
+            category,
+            description,
+            image
+        });
+        await newProduct.save();
+        res.status(201).json(newProduct);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to add product" });
+    }
+});
+
+app.delete('/api/products/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const parsedId = parseInt(id);
+        if (!isNaN(parsedId)) {
+            await Product.deleteOne({ id: parsedId });
+        } else {
+            await Product.deleteOne({ _id: id });
+        }
+        res.json({ message: "Product deleted" });
+    } catch (err) {
+        res.status(500).json({ error: "Failed to delete product" });
+    }
+});
+
 app.post('/api/auth/signup', async (req, res) => {
     const { name, email, password } = req.body;
     try {

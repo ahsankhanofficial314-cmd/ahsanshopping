@@ -89,7 +89,7 @@
                         <label>Description</label>
                         <textarea id="pDesc" rows="3" placeholder="Product details..."></textarea>
                     </div>
-                    <button type="submit" class="btn primary-btn" style="grid-column: span 2;">Save Product</button>
+                    <button type="submit" class="btn primary-btn" id="saveProductBtn" style="grid-column: span 2;">Save Product</button>
                 </form>
                 <div id="addMsg" class="mt-2 text-center" style="display:none; color: var(--color-success); font-weight: bold;"></div>
             </div>
@@ -142,8 +142,9 @@
                             <option value="on">On</option>
                         </select>
                     </div>
-                    <button type="button" class="btn primary-btn mt-2">Save Changes</button>
+                    <button type="button" class="btn primary-btn mt-2" id="saveSettingsBtn">Save Changes</button>
                 </form>
+                <div id="settingsMsg" class="mt-2 text-center" style="display:none; color: var(--color-success); font-weight: bold;"></div>
             </div>
 
             <!-- Signals Section -->
