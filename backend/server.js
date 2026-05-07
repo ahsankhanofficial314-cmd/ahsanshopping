@@ -23,7 +23,7 @@ app.use(helmet({
 }));
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(__dirname, '../dist')));
 
 // MongoDB Connection
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -205,7 +205,7 @@ app.post('/api/checkout', (req, res) => {
 
 // Fallback route for frontend
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
 app.listen(PORT, () => {
