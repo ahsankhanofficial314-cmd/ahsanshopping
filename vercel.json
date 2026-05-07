@@ -1,17 +1,35 @@
 {
   "version": 2,
-  "rewrites": [
+  "builds": [
     {
-      "source": "/api/auth/signup",
-      "destination": "/api/auth/signup.js"
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
     },
     {
-      "source": "/api/auth/login",
-      "destination": "/api/auth/login.js"
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/auth/signup",
+      "dest": "api/auth/signup.js"
     },
     {
-      "source": "/api/products",
-      "destination": "/api/products.js"
+      "src": "/api/auth/login",
+      "dest": "api/auth/login.js"
+    },
+    {
+      "src": "/api/products",
+      "dest": "api/products.js"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
