@@ -26,7 +26,7 @@
     },
     {
       "src": "/api/products/(?<id>[^/]*)",
-      "dest": "api/products/[id].js"
+      "dest": "api/products/[id].js?id=$id"
     },
     {
       "src": "/api/users",
