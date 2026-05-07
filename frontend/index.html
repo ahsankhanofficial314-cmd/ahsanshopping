@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AhsanShopping - Modern E-Commerce</title>
+    <meta name="description" content="Discover modern fashion trends for Men, Women, and Kids. Premium quality and elite brands.">
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Top Header -->
+    <div class="top-header">
+        <div class="container top-header-container">
+            <div class="top-msg"><i class="fa-solid fa-truck-fast"></i> Free shipping on orders over $50</div>
+            <div class="top-links">
+                <a href="#" id="topLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+                <span class="top-divider" id="topDivider1">|</span>
+                <a href="#" id="topSignupBtn"><i class="fa-solid fa-user-plus"></i> Sign Up</a>
+                
+                <a href="dashboard.html" id="topAdminBtn" style="display:none;"><i class="fa-solid fa-shield-halved"></i> Admin Panel</a>
+                <span class="top-divider" id="topDivider2" style="display:none;">|</span>
+                <a href="#" id="topLogoutBtn" style="display:none;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">Ahsan<span>Shopping</span></a>
+            
+            <ul class="nav-links">
+                <li><a href="#products-filter-section" class="nav-cat-link" data-filter="men">Men</a></li>
+                <li><a href="#products-filter-section" class="nav-cat-link" data-filter="women">Women</a></li>
+                <li><a href="#products-filter-section" class="nav-cat-link" data-filter="kids">Kids</a></li>
+                <li><a href="#products-filter-section" class="nav-cat-link" data-filter="beauty">Beauty</a></li>
+                <li><a href="#brands" class="nav-scroll-link">Brands</a></li>
+                <li><a href="#new-arrivals" class="nav-scroll-link">New Arrivals</a></li>
+                <li><a href="#sale" class="nav-scroll-link highlight">Sale</a></li>
+            </ul>
+
+            <div class="nav-icons">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search products...">
+                    <button class="icon-btn" title="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+                <button class="icon-btn" title="Profile" id="profileBtn"><i class="fa-regular fa-user"></i></button>
+                <button class="icon-btn" title="Wishlist" id="wishlistBtn"><i class="fa-regular fa-heart"></i><span class="wish-count">0</span></button>
+                <button class="icon-btn cart-btn" title="Shopping Bag">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cart-count">0</span>
+                </button>
+            </div>
+            
+            <button class="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- Auth Modals -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-content">
+            <button class="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form active">
+                <form id="formLogin" method="POST" action="javascript:void(0);">
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" name="email" autocomplete="username" required placeholder="Enter your email">
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" name="password" autocomplete="current-password" required placeholder="Enter your password">
+                    </div>
+                    <button type="submit" class="btn primary-btn w-100">Login</button>
+                </form>
+                <p class="auth-switch" style="text-align: center; margin-top: 15px;">Don't have an account? <a href="#" id="showSignup" style="color: var(--color-primary-light); font-weight: 600;">Sign Up</a></p>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" class="auth-form">
+                <form id="formSignup" method="POST" action="javascript:void(0);">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" id="signupName" name="name" autocomplete="name" required placeholder="Enter your name">
+                    </div>
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" name="email" autocomplete="username" required placeholder="Enter your email">
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" name="password" autocomplete="new-password" required placeholder="Create a password">
+                    </div>
+                    <button type="submit" class="btn primary-btn w-100">Sign Up</button>
+                </form>
+                <p class="auth-switch" style="text-align: center; margin-top: 15px;">Already have an account? <a href="#" id="showLogin" style="color: var(--color-primary-light); font-weight: 600;">Login</a></p>
+            </div>
+
+            <!-- Logged In State -->
+            <div id="loggedInState" class="auth-form">
+                <h2>My Profile</h2>
+                <p>Welcome, <span id="userNameDisplay">User</span>!</p>
+                <ul class="profile-menu">
+                    <li><a href="#"><i class="fa-solid fa-box"></i> My Orders</a></li>
+                    <li><a href="#"><i class="fa-solid fa-gear"></i> Settings</a></li>
+                </ul>
+                <button id="logoutBtn" class="btn danger-btn w-100">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section (Slider) -->
+    <header class="hero">
+        <div class="slider-container">
+            <div class="slide active">
+                <img src="images/hero_1.png" alt="High-end Men's Fashion">
+            </div>
+            <div class="slide">
+                <img src="images/hero_2.png" alt="Elegant Women's Fashion">
+            </div>
+            <div class="slide">
+                <img src="images/hero_3.png" alt="Stylish Kids Fashion">
+            </div>
+        </div>
+        <div class="slider-controls">
+            <button id="prevSlide"><i class="fa-solid fa-chevron-left"></i></button>
+            <button id="nextSlide"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+        <div class="slider-dots"></div>
+    </header>
+
+    <!-- New Fashion Trends -->
+    <section class="trends-section" id="new-arrivals">
+        <div class="section-header">
+            <h2>New Fashion Trends</h2>
+            <p>Explore the latest additions to our collection.</p>
+        </div>
+        <div class="container grid-3">
+            <!-- Men Category -->
+            <div class="category-card">
+                <img src="images/product_men.png" alt="Men's Casual Shirt">
+                <div class="card-info">
+                    <h3>Premium Men's Shirt</h3>
+                    <p class="price">$45.00</p>
+                    <button class="btn outline-btn view-cat-btn" data-cat="men">View All Men <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+            <!-- Women Category -->
+            <div class="category-card">
+                <img src="images/product_women.png" alt="Elegant Women's Dress">
+                <div class="card-info">
+                    <h3>Elegant Evening Dress</h3>
+                    <p class="price">$85.00</p>
+                    <button class="btn outline-btn view-cat-btn" data-cat="women">View All Women <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+            <!-- Kids Category -->
+            <div class="category-card">
+                <img src="images/product_kids.png" alt="Kids T-Shirt">
+                <div class="card-info">
+                    <h3>Stylish Kids T-Shirt</h3>
+                    <p class="price">$25.00</p>
+                    <button class="btn outline-btn view-cat-btn" data-cat="kids">View All Kids <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step Into Stylish Trends (Filtering) -->
+    <section class="filtering-section bg-light" id="products-filter-section">
+        <div class="section-header">
+            <h2>Step Into Stylish Trends</h2>
+            <p>Find exactly what you're looking for.</p>
+        </div>
+        <div class="container">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="men">Men</button>
+                <button class="filter-btn" data-filter="women">Women</button>
+                <button class="filter-btn" data-filter="kids">Kids</button>
+            </div>
+            
+            <div class="product-grid" id="filterGrid">
+                <!-- Products will be injected dynamically via script.js -->
+                <div class="loading-spinner text-center w-100" style="grid-column: 1 / -1; padding: 50px;">
+                    <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                    <p>Loading products...</p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <button class="btn primary-btn view-all-btn">View All Products</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Fashion Sale -->
+    <section class="sale-section" id="sale">
+        <div class="section-header">
+            <h2>🔥 Trending Fashion Sale</h2>
+            <p>Grab your favorites before they're gone!</p>
+        </div>
+        <div class="container grid-2">
+            <div class="sale-card">
+                <div class="sale-badge">-30%</div>
+                <img src="images/product_women.png" alt="Sale Item">
+                <div class="sale-info">
+                    <h3>Luxury Evening Gown</h3>
+                    <div class="price-wrap">
+                        <span class="old-price">$150.00</span>
+                        <span class="new-price">$105.00</span>
+                    </div>
+                    <button class="btn outline-btn view-details-btn" data-id="2">Details</button>
+                </div>
+            </div>
+            <div class="sale-card">
+                <div class="sale-badge">-20%</div>
+                <img src="images/product_men.png" alt="Sale Item">
+                <div class="sale-info">
+                    <h3>Premium Leather Jacket</h3>
+                    <div class="price-wrap">
+                        <span class="old-price">$200.00</span>
+                        <span class="new-price">$160.00</span>
+                    </div>
+                    <button class="btn outline-btn view-details-btn" data-id="1">Details</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fake Payment Options -->
+        <div class="payment-demo container">
+            <h3>Checkout (Simulation)</h3>
+            <div class="payment-methods">
+                <button class="pay-btn jazzcash open-checkout" data-method="JazzCash">JazzCash</button>
+                <button class="pay-btn easypaisa open-checkout" data-method="EasyPaisa">EasyPaisa</button>
+                <button class="pay-btn paypal open-checkout" data-method="PayPal"><i class="fa-brands fa-paypal"></i> PayPal</button>
+                <button class="pay-btn card open-checkout" data-method="Credit Card"><i class="fa-regular fa-credit-card"></i> Card</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dive Into Elite Brands -->
+    <section class="brands-section" id="brands">
+        <div class="section-header">
+            <h2>Dive Into Elite Brands</h2>
+        </div>
+        <div class="marquee-wrapper">
+            <div class="marquee-content">
+                <!-- Using FontAwesome text for logos as placeholders -->
+                <div class="brand-item">GUCCI</div>
+                <div class="brand-item">ZARA</div>
+                <div class="brand-item">NIKE</div>
+                <div class="brand-item">ADIDAS</div>
+                <div class="brand-item">H&M</div>
+                <div class="brand-item">PRADA</div>
+                <!-- Duplicate for infinite scroll -->
+                <div class="brand-item">GUCCI</div>
+                <div class="brand-item">ZARA</div>
+                <div class="brand-item">NIKE</div>
+                <div class="brand-item">ADIDAS</div>
+                <div class="brand-item">H&M</div>
+                <div class="brand-item">PRADA</div>
+            </div>
+        </div>
+        
+        <!-- Auto Moving Product Slider -->
+        <div class="auto-slider mt-4">
+            <div class="auto-slider-track">
+                <img src="images/product_men.png" class="mini-prod" alt="Brand Product">
+                <img src="images/product_women.png" class="mini-prod" alt="Brand Product">
+                <img src="images/product_kids.png" class="mini-prod" alt="Brand Product">
+                <img src="images/product_men.png" class="mini-prod" alt="Brand Product">
+                <img src="images/product_women.png" class="mini-prod" alt="Brand Product">
+            </div>
+        </div>
+    </section>
+
+    <!-- Follow Us Section -->
+    <section class="follow-section text-center">
+        <h2>Join Our Community</h2>
+        <p>Stay updated with the latest fashion trends and exclusive offers.</p>
+        <button class="btn primary-btn mt-2">Follow Us</button>
+        <div class="social-icons mt-3">
+            <a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#" class="social-link"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" class="social-link"><i class="fa-brands fa-twitter"></i></a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-col brand-info">
+                <a href="#" class="logo">Ahsan<span>Shopping</span></a>
+                <p>Your one-stop destination for modern, elite, and affordable fashion. Elevate your wardrobe today.</p>
+                <div class="trust-badges mt-2">
+                    <i class="fa-solid fa-shield-halved"></i> 100% Secure Checkout
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Customer Policies</h4>
+                <ul>
+                    <li><a href="#" id="linkReturnPolicy">Return Policy</a></li>
+                    <li><a href="#" id="linkShippingInfo">Shipping Info</a></li>
+                    <li><a href="#" id="linkPrivacyPolicy">Privacy Policy</a></li>
+                    <li><a href="#" id="linkTermsOfService">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Online Shopping</h4>
+                <ul>
+                    <li><a href="#products" class="footer-cat" data-cat="men">Men's Fashion</a></li>
+                    <li><a href="#products" class="footer-cat" data-cat="women">Women's Clothing</a></li>
+                    <li><a href="#products" class="footer-cat" data-cat="kids">Kids Wear</a></li>
+                    <li><a href="dashboard.html" style="color: var(--color-primary-light);"><i class="fa-solid fa-gauge"></i> Admin Dashboard</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Payment Methods</h4>
+                <div class="footer-payments">
+                    <a href="#products-filter-section" class="payment-link" title="JazzCash"><i class="fa-solid fa-mobile-screen-button"></i> JazzCash</a>
+                    <a href="#products-filter-section" class="payment-link" title="EasyPaisa"><i class="fa-solid fa-wallet"></i> EasyPaisa</a>
+                    <a href="#products-filter-section" class="payment-link" title="PayPal"><i class="fa-brands fa-paypal"></i> PayPal</a>
+                    <a href="#products-filter-section" class="payment-link" title="Visa / Mastercard"><i class="fa-solid fa-credit-card"></i> Visa/MC</a>
+                </div>
+                <p class="mt-2 guarantee-link" id="linkGuarantee" style="cursor:pointer; color: var(--color-primary-light);"><i class="fa-solid fa-award"></i> Guarantee: 30-Days Money Back</p>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <p>&copy; 2026 AhsanShopping. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer-overlay" id="cartOverlay"></div>
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+            <button class="close-cart" id="closeCartBtn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="cart-items" id="cartItemsList">
+            <!-- Items injected by JS -->
+            <p class="empty-cart-msg">Your cart is empty.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotalPrice">$0.00</span>
+            </div>
+            <button class="btn primary-btn w-100 mt-2" id="checkoutBtn">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <!-- Product Details Modal -->
+    <div class="modal-overlay" id="detailsModalOverlay">
+        <div class="modal-content product-details-modal">
+            <button class="close-modal" id="closeDetailsBtn"><i class="fa-solid fa-xmark"></i></button>
+            <div class="details-content-grid" id="detailsContent">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment/Checkout Modal -->
+    <div class="modal-overlay" id="checkoutModalOverlay">
+        <div class="modal-content checkout-modal">
+            <button class="close-modal" id="closeCheckoutBtn"><i class="fa-solid fa-xmark"></i></button>
+            <h2 id="checkoutTitle">Checkout</h2>
+            <div id="checkoutFormWrapper">
+                <form id="checkoutForm" class="mt-3">
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Select Payment Method</label>
+                        <select id="paymentMethod" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" required>
+                            <option value="" disabled selected>Choose a method...</option>
+                            <option value="JazzCash">JazzCash</option>
+                            <option value="EasyPaisa">EasyPaisa</option>
+                            <option value="PayPal">PayPal</option>
+                            <option value="Visa/Mastercard">Visa / Mastercard</option>
+                        </select>
+                    </div>
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Card / Account Number</label>
+                        <input type="text" id="checkoutAccountNumber" required placeholder="XXXX-XXXX-XXXX-XXXX" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div class="input-group" style="margin-bottom: 15px;">
+                        <label>Name on Account</label>
+                        <input type="text" id="checkoutAccountName" required placeholder="John Doe" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <button type="submit" class="btn primary-btn w-100" id="paySubmitBtn">Pay Now</button>
+                </form>
+            </div>
+            <div id="checkoutLoading" class="text-center mt-3" style="display:none;">
+                <i class="fa-solid fa-spinner fa-spin fa-3x" style="color:var(--color-primary-light);"></i>
+                <p class="mt-2">Processing your payment securely...</p>
+            </div>
+            <div id="checkoutSuccess" class="text-center mt-3" style="display:none;">
+                <i class="fa-regular fa-circle-check fa-4x" style="color:var(--color-success);"></i>
+                <h3 class="mt-2">Payment Successful!</h3>
+                <p class="mt-1 text-muted">Order ID: <span id="successOrderId"></span></p>
+                <p>Thank you for shopping with AhsanShopping.</p>
+                <button class="btn outline-btn mt-3" id="closeSuccessBtn">Continue Shopping</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wishlist Modal -->
+    <div class="modal-overlay" id="wishlistModalOverlay">
+        <div class="modal-content">
+            <button class="close-modal" id="closeWishlistBtn"><i class="fa-solid fa-xmark"></i></button>
+            <h2>My Favorites</h2>
+            <div class="wishlist-items" id="wishlistItemsList">
+                <!-- Injected via JS -->
+                <p class="empty-msg text-center mt-3">Your wishlist is empty.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info/Policy Modal -->
+    <div class="modal-overlay" id="infoModalOverlay">
+        <div class="modal-content">
+            <button class="close-modal" id="closeInfoBtn"><i class="fa-solid fa-xmark"></i></button>
+            <h2 id="infoModalTitle">Policy</h2>
+            <div id="infoModalBody" class="mt-3">
+                <!-- Content injected via JS -->
+            </div>
+            <button class="btn primary-btn w-100 mt-4" id="infoModalCloseBtn">Close</button>
+        </div>
+    </div>
+    <script type="module" src="js/script.js"></script>
+</body>
+</html>

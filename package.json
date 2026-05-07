@@ -1,0 +1,23 @@
+{
+  "name": "wshopping",
+  "version": "1.0.0",
+  "description": "AhsanShopping E-commerce Website",
+  "main": "backend/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server.js",
+    "dev": "concurrently \"npm run server\""
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^4.19.0",
+    "helmet": "^8.1.0",
+    "mongoose": "^9.6.1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "nodemon": "^3.1.14"
+  }
+}
