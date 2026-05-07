@@ -1,3 +1,5 @@
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 document.addEventListener('DOMContentLoaded', () => {
     // Allow access without password prompt
     localStorage.setItem('ahsanAdmin', 'true');
@@ -54,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadAdminProducts() {
         try {
-            const res = await fetch('/api/products');
+            const res = await fetch(`${API_BASE}/api/products`);
             const products = await res.json();
             renderAdminProducts(products);
             totalProductsCount.textContent = products.length;
@@ -99,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.deleteProduct = async function(id) {
         if (confirm("Are you sure you want to delete this product?")) {
             try {
-                const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+                const res = await fetch(`${API_BASE}/api/products/${id}`, { method: 'DELETE' });
                 if (res.ok) {
                     loadAdminProducts();
                 } else {
@@ -123,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const res = await fetch('/api/products', {
+            const res = await fetch(`${API_BASE}/api/products`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, price, category, description, image })
@@ -141,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadAdminUsers() {
         try {
-            const res = await fetch('/api/users');
+            const res = await fetch(`${API_BASE}/api/users`);
             const users = await res.json();
             renderAdminUsers(users);
             const userCountDisplay = document.getElementById('analyticsUsersCount');
@@ -168,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadAdminSignals() {
         try {
-            const res = await fetch('/api/signals');
+            const res = await fetch(`${API_BASE}/api/signals`);
             const signals = await res.json();
             const signalsList = document.getElementById('adminSignalsList');
             if (!signalsList) return;

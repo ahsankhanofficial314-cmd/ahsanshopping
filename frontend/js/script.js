@@ -2,6 +2,8 @@
  * AhsanShopping - Professional Full Stack Script
  */
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 document.addEventListener('DOMContentLoaded', () => {
     
     // --- 1. Navbar Scroll Effect ---
@@ -81,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadProducts() {
         try {
-            const res = await fetch('/api/products');
+        const res = await fetch(`${API_BASE}/api/products`);
             allProducts = await res.json();
             renderProducts(allProducts);
         } catch (error) {
@@ -406,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
         checkoutLoading.style.display = 'block';
 
         try {
-            const res = await fetch('/api/checkout', {
+            const res = await fetch(`${API_BASE}/api/checkout`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ cart, method: finalMethod })
@@ -559,7 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = formSignup.querySelector('input[type="password"]').value;
         
         try {
-            const res = await fetch('/api/auth/signup', {
+            const res = await fetch(`${API_BASE}/api/auth/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password })
@@ -581,7 +583,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = formLogin.querySelector('input[type="password"]').value;
         
         try {
-            const res = await fetch('/api/auth/login', {
+            const res = await fetch(`${API_BASE}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
