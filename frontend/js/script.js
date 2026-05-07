@@ -6,8 +6,11 @@ const API_BASE = import.meta.env.VITE_API_URL || '';
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 1. Navbar Scroll Effect ---
+    // --- 1. Navbar Scroll & Mobile Menu ---
     const navbar = document.querySelector('.navbar');
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const navLinks = document.querySelector('.nav-links');
+
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
             navbar.classList.add('scrolled');
@@ -15,6 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
             navbar.classList.remove('scrolled');
         }
     });
+
+    if (mobileMenuBtn && navLinks) {
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    }
 
     // --- 2. Hero Slider ---
     const slides = document.querySelectorAll('.slide');

@@ -14,9 +14,12 @@
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
-                <i class="fa-solid fa-cart-shopping"></i> AhsanAdmin
+                <span><i class="fa-solid fa-cart-shopping"></i> AhsanAdmin</span>
+                <button class="sidebar-toggle-btn" id="sidebarToggle" style="display:none;">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
             </div>
-            <ul class="sidebar-menu">
+            <ul class="sidebar-menu" id="sidebarMenu">
                 <li><a href="#" class="active" data-target="dashboardSection"><i class="fa-solid fa-gauge"></i> <span>Dashboard</span></a></li>
                 <li><a href="#" data-target="productsSection"><i class="fa-solid fa-box"></i> <span>Products</span></a></li>
                 <li><a href="#" data-target="settingsSection"><i class="fa-solid fa-gear"></i> <span>Settings</span></a></li>

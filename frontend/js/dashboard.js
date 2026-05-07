@@ -13,6 +13,27 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTime();
     setInterval(updateTime, 1000);
 
+    // --- Mobile Sidebar Toggle ---
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarMenu = document.getElementById('sidebarMenu');
+
+    function checkMobile() {
+        if (window.innerWidth <= 768) {
+            sidebarToggle.style.display = 'flex';
+        } else {
+            sidebarToggle.style.display = 'none';
+            sidebarMenu.classList.remove('open');
+        }
+    }
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', () => {
+            sidebarMenu.classList.toggle('open');
+        });
+    }
+
     document.getElementById('logoutAdmin').addEventListener('click', () => {
         localStorage.removeItem('ahsanAdmin');
         window.location.href = 'index.html';
@@ -45,6 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 sections[target].forEach(el => {
                     if (el) el.style.display = (target === 'dashboardSection' && el.classList.contains('stats-grid')) ? 'grid' : 'block';
                 });
+            }
+
+            // Auto-close sidebar on mobile after selecting
+            if (window.innerWidth <= 768) {
+                sidebarMenu.classList.remove('open');
             }
         });
     });
