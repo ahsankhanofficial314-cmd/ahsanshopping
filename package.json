@@ -9,6 +9,7 @@
     "server": "nodemon backend/server.js",
     "vite": "vite",
     "build": "vite build",
+    "vercel-build": "vite build",
     "preview": "vite preview",
     "dev": "concurrently \"npm run server\" \"npm run vite\""
   },
