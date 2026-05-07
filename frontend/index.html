@@ -16,8 +16,14 @@
     <div class="top-header">
         <div class="container top-header-container">
             <div class="top-msg"><i class="fa-solid fa-truck-fast"></i> Free shipping on orders over $50</div>
-            <div class="top-links" style="display: none;">
-                <!-- Login links removed as per user request -->
+            <div class="top-links">
+                <a href="#" id="topLoginBtn"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+                <span class="top-divider" id="topDivider1">|</span>
+                <a href="#" id="topSignupBtn"><i class="fa-solid fa-user-plus"></i> Sign Up</a>
+                
+                <a href="dashboard.html" id="topAdminBtn" style="display:none;"><i class="fa-solid fa-shield-halved"></i> Admin Panel</a>
+                <span class="top-divider" id="topDivider2" style="display:none;">|</span>
+                <a href="#" id="topLogoutBtn" style="display:none;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
             </div>
         </div>
     </div>
@@ -99,8 +105,8 @@
                 <h2>My Profile</h2>
                 <p>Welcome, <span id="userNameDisplay">User</span>!</p>
                 <ul class="profile-menu">
-                    <li><a href="#"><i class="fa-solid fa-box"></i> My Orders</a></li>
-                    <li><a href="#"><i class="fa-solid fa-gear"></i> Settings</a></li>
+                    <li><a href="#" id="myOrdersBtn"><i class="fa-solid fa-box"></i> My Orders</a></li>
+                    <li><a href="#" id="mySettingsBtn"><i class="fa-solid fa-gear"></i> Settings</a></li>
                 </ul>
                 <button id="logoutBtn" class="btn danger-btn w-100">Logout</button>
             </div>

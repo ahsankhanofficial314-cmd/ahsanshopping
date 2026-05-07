@@ -618,6 +618,24 @@ document.addEventListener('DOMContentLoaded', () => {
         authModal.classList.remove('active');
     });
 
+    const myOrdersBtn = document.getElementById('myOrdersBtn');
+    if (myOrdersBtn) {
+        myOrdersBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            alert("No past orders found. Start shopping to see your orders here!");
+            authModal.classList.remove('active');
+        });
+    }
+
+    const mySettingsBtn = document.getElementById('mySettingsBtn');
+    if (mySettingsBtn) {
+        mySettingsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            alert("Profile settings feature is currently under construction.");
+            authModal.classList.remove('active');
+        });
+    }
+
     // --- 9. Info Modal & Policies ---
     const infoModal = document.getElementById('infoModalOverlay');
     const infoTitle = document.getElementById('infoModalTitle');
