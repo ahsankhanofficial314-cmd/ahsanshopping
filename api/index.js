@@ -2,20 +2,11 @@ import dns from 'dns';
 dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
 
 import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-dotenv.config();
-
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(helmet({ contentSecurityPolicy: false }));
@@ -32,21 +23,18 @@ if (MONGODB_URI) {
             await seedDatabase();
         })
         .catch(err => console.error('❌ ERROR: MongoDB Connection Failed!', err.message));
-} else {
-    console.log('⚠️ WARNING: MONGODB_URI is not defined!');
 }
 
 // Models
-const userSchema = new mongoose.Schema({
+const User = mongoose.models.User || mongoose.model('User', new mongoose.Schema({
     id: Number,
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     createdAt: { type: Date, default: Date.now }
-});
-const User = mongoose.model('User', userSchema);
+}));
 
-const productSchema = new mongoose.Schema({
+const Product = mongoose.models.Product || mongoose.model('Product', new mongoose.Schema({
     id: Number,
     name: { type: String, required: true },
     price: { type: Number, required: true },
@@ -54,26 +42,24 @@ const productSchema = new mongoose.Schema({
     image: { type: String, default: "images/product_men.png" },
     description: { type: String, default: "" },
     createdAt: { type: Date, default: Date.now }
-});
-const Product = mongoose.model('Product', productSchema);
+}));
 
-const signalSchema = new mongoose.Schema({
+const Signal = mongoose.models.Signal || mongoose.model('Signal', new mongoose.Schema({
     message: { type: String, required: true },
     time: { type: Date, default: Date.now }
-});
-const Signal = mongoose.model('Signal', signalSchema);
+}));
 
-// Data
+// Seeding Data
 const initialProducts = [
-    { id: 1, name: "Classic Oxford Shirt", price: 55, category: "men", image: "images/product_men.png", description: "A premium quality classic oxford shirt for men." },
-    { id: 2, name: "Premium Leather Jacket", price: 120, category: "men", image: "images/product_men.png", description: "High-quality faux leather jacket." },
-    { id: 3, name: "Men's Casual Sneakers", price: 85, category: "men", image: "images/product_men.png", description: "Comfortable and durable sneakers." },
-    { id: 4, name: "Summer Floral Dress", price: 65, category: "women", image: "images/product_women.png", description: "Elegant summer dress." },
-    { id: 5, name: "Luxury Evening Gown", price: 150, category: "women", image: "images/product_women.png", description: "Stunning evening gown." },
-    { id: 6, name: "Designer Handbag", price: 95, category: "women", image: "images/product_women.png", description: "Stylish premium handbag." },
-    { id: 7, name: "Kids Denim Jacket", price: 35, category: "kids", image: "images/product_kids.png", description: "Rough-tough denim for kids." },
-    { id: 8, name: "Kids Summer T-Shirt", price: 20, category: "kids", image: "images/product_kids.png", description: "Breathable cotton t-shirt." },
-    { id: 9, name: "Kids School Shoes", price: 40, category: "kids", image: "images/product_kids.png", description: "Durable school shoes." }
+    { id: 1, name: "Classic Oxford Shirt", price: 55, category: "men", image: "images/product_men.png" },
+    { id: 2, name: "Premium Leather Jacket", price: 120, category: "men", image: "images/product_men.png" },
+    { id: 3, name: "Men's Casual Sneakers", price: 85, category: "men", image: "images/product_men.png" },
+    { id: 4, name: "Summer Floral Dress", price: 65, category: "women", image: "images/product_women.png" },
+    { id: 5, name: "Luxury Evening Gown", price: 150, category: "women", image: "images/product_women.png" },
+    { id: 6, name: "Designer Handbag", price: 95, category: "women", image: "images/product_women.png" },
+    { id: 7, name: "Kids Denim Jacket", price: 35, category: "kids", image: "images/product_kids.png" },
+    { id: 8, name: "Kids Summer T-Shirt", price: 20, category: "kids", image: "images/product_kids.png" },
+    { id: 9, name: "Kids School Shoes", price: 40, category: "kids", image: "images/product_kids.png" }
 ];
 
 async function seedDatabase() {
@@ -86,15 +72,15 @@ async function seedDatabase() {
     } catch (err) { console.error('❌ Seeding Error:', err.message); }
 }
 
-// Routes
-app.get('/api/products', async (req, res) => {
+// Routes (Handling both /api/path and /path)
+app.get(['/api/products', '/products'], async (req, res) => {
     try {
         const products = await Product.find().sort({ createdAt: -1 });
         res.json(products);
-    } catch (err) { res.status(500).json({ error: "Failed to fetch products" }); }
+    } catch (err) { res.status(500).json({ error: "Failed" }); }
 });
 
-app.post('/api/auth/signup', async (req, res) => {
+app.post(['/api/auth/signup', '/auth/signup'], async (req, res) => {
     const { name, email, password } = req.body;
     try {
         const exists = await User.findOne({ email });
@@ -105,7 +91,7 @@ app.post('/api/auth/signup', async (req, res) => {
     } catch (err) { res.status(500).json({ error: "Signup failed" }); }
 });
 
-app.post('/api/auth/login', async (req, res) => {
+app.post(['/api/auth/login', '/auth/login'], async (req, res) => {
     const { email, password } = req.body;
     try {
         const user = await User.findOne({ email, password });
@@ -114,24 +100,9 @@ app.post('/api/auth/login', async (req, res) => {
     } catch (err) { res.status(500).json({ error: "Login failed" }); }
 });
 
-app.get('/api/signals', async (req, res) => {
-    try {
-        const signals = await Signal.find().sort({ time: -1 }).limit(20);
-        res.json(signals);
-    } catch (err) { res.status(500).json({ error: "Failed" }); }
+// Fallback for any other /api routes
+app.all('/api/(.*)', (req, res) => {
+    res.status(404).json({ error: "API route not found", path: req.url });
 });
-
-app.get('/api/users', async (req, res) => {
-    try {
-        const users = await User.find({}, '-password').sort({ createdAt: -1 });
-        res.json(users);
-    } catch (err) { res.status(500).json({ error: "Failed" }); }
-});
-
-app.get('/api/health', (req, res) => res.json({ status: 'OK' }));
-
-if (process.env.VERCEL !== '1') {
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-}
 
 export default app;
