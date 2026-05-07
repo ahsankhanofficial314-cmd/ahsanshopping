@@ -87,8 +87,9 @@ document.addEventListener('DOMContentLoaded', () => {
             allProducts = await res.json();
             renderProducts(allProducts);
         } catch (error) {
-            filterGrid.innerHTML = '<p class="text-center w-100" style="grid-column: 1/-1;">Failed to load products.</p>';
+            filterGrid.innerHTML = '<p class="text-center w-100" style="grid-column: 1/-1;">Failed to load products. Make sure the backend server is running.</p>';
             console.error("Error loading products:", error);
+            alert("Error loading products: " + error.message);
         }
     }
 
@@ -572,9 +573,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 checkLoginState();
                 authModal.classList.remove('active');
             } else {
+                alert("Signup failed: " + (data.error || "Unknown error"));
                 console.error(data.error || "Signup failed");
             }
-        } catch(err) { console.error(err); }
+        } catch(err) { 
+            alert("Network error during signup. Is the backend server running?");
+            console.error(err); 
+        }
     });
 
     formLogin.addEventListener('submit', async (e) => {
@@ -594,9 +599,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 checkLoginState();
                 authModal.classList.remove('active');
             } else {
-                alert(data.error || "Invalid credentials");
+                alert("Login failed: " + (data.error || "Invalid credentials"));
             }
-        } catch(err) { console.error(err); }
+        } catch(err) { 
+            alert("Network error during login. Is the backend server running?");
+            console.error(err); 
+        }
     });
 
     logoutBtn.addEventListener('click', () => {

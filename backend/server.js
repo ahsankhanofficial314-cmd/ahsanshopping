@@ -1,5 +1,5 @@
 import dns from 'dns';
-dns.setServers(['8.8.8.8', '8.8.4.4']);
+dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
 
 import express from 'express';
 import path from 'path';
@@ -15,42 +15,32 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(helmet({
-    contentSecurityPolicy: false, // Disable CSP for demo/simplicity
-}));
-app.use(cors({
-    origin: '*',  // Allow all origins (frontend on Vercel)
-    credentials: true
-}));
+app.use(helmet({ contentSecurityPolicy: false }));
+app.use(cors({ origin: '*', credentials: true }));
 app.use(express.json());
 
 // MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGO_UR;
 
 if (!MONGODB_URI) {
-    console.error('CRITICAL ERROR: MONGODB_URI is not defined in .env file!');
-    process.exit(1);
+    console.log('⚠️ WARNING: MONGODB_URI is not defined! Local .env might be missing.');
 }
 
-console.log('Attempting to connect to MongoDB...');
 mongoose.connect(MONGODB_URI)
-    .then(() => {
+    .then(async () => {
         console.log('✅ SUCCESS: Connected to MongoDB Atlas');
+        await seedDatabase();
     })
     .catch(err => {
-        console.error('❌ ERROR: MongoDB Connection Failed!');
-        console.error('Reason:', err.message);
-        console.log('Please check your MONGODB_URI and Network Access (0.0.0.0/0) in MongoDB Atlas.');
+        console.error('❌ ERROR: MongoDB Connection Failed!', err.message);
     });
 
-// =======================
-// MONGOOSE MODELS
-// =======================
-
+// Models
 const userSchema = new mongoose.Schema({
+    id: Number,
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -59,6 +49,7 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 
 const productSchema = new mongoose.Schema({
+    id: Number,
     name: { type: String, required: true },
     price: { type: Number, required: true },
     category: { type: String, required: true },
@@ -74,148 +65,76 @@ const signalSchema = new mongoose.Schema({
 });
 const Signal = mongoose.model('Signal', signalSchema);
 
-// =======================
-// API ROUTES
-// =======================
+// Initial Data (Embedded for Vercel Reliability)
+const initialProducts = [
+    { id: 1, name: "Classic Oxford Shirt", price: 55, category: "men", image: "images/product_men.png", description: "A premium quality classic oxford shirt for men." },
+    { id: 2, name: "Premium Leather Jacket", price: 120, category: "men", image: "images/product_men.png", description: "High-quality faux leather jacket." },
+    { id: 3, name: "Men's Casual Sneakers", price: 85, category: "men", image: "images/product_men.png", description: "Comfortable and durable sneakers." },
+    { id: 4, name: "Summer Floral Dress", price: 65, category: "women", image: "images/product_women.png", description: "Elegant summer dress." },
+    { id: 5, name: "Luxury Evening Gown", price: 150, category: "women", image: "images/product_women.png", description: "Stunning evening gown." },
+    { id: 6, name: "Designer Handbag", price: 95, category: "women", image: "images/product_women.png", description: "Stylish premium handbag." },
+    { id: 7, name: "Kids Denim Jacket", price: 35, category: "kids", image: "images/product_kids.png", description: "Rough-tough denim for kids." },
+    { id: 8, name: "Kids Summer T-Shirt", price: 20, category: "kids", image: "images/product_kids.png", description: "Breathable cotton t-shirt." },
+    { id: 9, name: "Kids School Shoes", price: 40, category: "kids", image: "images/product_kids.png", description: "Durable school shoes." }
+];
 
-// --- Products API ---
+async function seedDatabase() {
+    try {
+        const pCount = await Product.countDocuments();
+        if (pCount === 0) {
+            await Product.insertMany(initialProducts);
+            console.log('📦 Database Seeded: Products added');
+        }
+    } catch (err) { console.error('❌ Seeding Error:', err.message); }
+}
+
+// Routes
 app.get('/api/products', async (req, res) => {
     try {
         const products = await Product.find().sort({ createdAt: -1 });
         res.json(products);
-    } catch (err) {
-        res.status(500).json({ error: "Failed to fetch products" });
-    }
+    } catch (err) { res.status(500).json({ error: "Failed to fetch products" }); }
 });
 
-app.post('/api/products', async (req, res) => {
-    const { name, price, category, image, description } = req.body;
-    if (!name || !price || !category) {
-        return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    try {
-        const newProduct = new Product({
-            name,
-            price: parseFloat(price),
-            category,
-            image: image || "images/product_men.png",
-            description: description || ""
-        });
-        await newProduct.save();
-        res.status(201).json({ message: "Product added successfully", product: newProduct });
-    } catch (err) {
-        res.status(500).json({ error: "Failed to add product" });
-    }
-});
-
-app.delete('/api/products/:id', async (req, res) => {
-    try {
-        const product = await Product.findByIdAndDelete(req.params.id);
-        if (!product) return res.status(404).json({ error: "Product not found" });
-        res.json({ message: "Product deleted successfully" });
-    } catch (err) {
-        res.status(500).json({ error: "Failed to delete product" });
-    }
-});
-
-// --- Signals API ---
-app.get('/api/signals', async (req, res) => {
-    try {
-        const signals = await Signal.find().sort({ time: -1 }).limit(20);
-        res.json(signals);
-    } catch (err) {
-        res.status(500).json({ error: "Failed to fetch signals" });
-    }
-});
-
-// Helper to push a signal
-async function pushSignal(message) {
-    try {
-        const newSignal = new Signal({ message });
-        await newSignal.save();
-        
-        // Cleanup: Keep only last 20 signals
-        const count = await Signal.countDocuments();
-        if (count > 20) {
-            const oldest = await Signal.find().sort({ time: 1 }).limit(count - 20);
-            const ids = oldest.map(s => s._id);
-            await Signal.deleteMany({ _id: { $in: ids } });
-        }
-    } catch (err) {
-        console.error("Signal Error:", err);
-    }
-}
-
-// --- Users API (Admin) ---
-app.get('/api/users', async (req, res) => {
-    try {
-        const users = await User.find({}, '-password').sort({ createdAt: -1 });
-        res.json(users);
-    } catch (err) {
-        res.status(500).json({ error: "Failed to fetch users" });
-    }
-});
-
-// --- Auth API ---
 app.post('/api/auth/signup', async (req, res) => {
     const { name, email, password } = req.body;
-    if (!name || !email || !password) {
-        return res.status(400).json({ error: "All fields are required" });
-    }
-
     try {
-        const userExists = await User.findOne({ email });
-        if (userExists) {
-            return res.status(400).json({ error: "User already exists" });
-        }
-
-        const newUser = new User({ name, email, password }); // Note: Still not hashing for now, keep as per user request
+        const exists = await User.findOne({ email });
+        if (exists) return res.status(400).json({ error: "User already exists" });
+        const newUser = new User({ name, email, password, id: Date.now() });
         await newUser.save();
-
-        await pushSignal(`New user registered: ${name}`);
-
-        res.status(201).json({ message: "User created successfully", user: { id: newUser._id, name: newUser.name, email: newUser.email } });
-    } catch (err) {
-        res.status(500).json({ error: "Signup failed" });
-    }
+        res.status(201).json({ message: "User created", user: { id: newUser.id, name: newUser.name, email: newUser.email } });
+    } catch (err) { res.status(500).json({ error: "Signup failed" }); }
 });
 
 app.post('/api/auth/login', async (req, res) => {
     const { email, password } = req.body;
     try {
         const user = await User.findOne({ email, password });
-        if (!user) {
-            return res.status(401).json({ error: "Invalid credentials" });
-        }
-        res.json({ message: "Login successful", user: { id: user._id, name: user.name, email: user.email } });
-    } catch (err) {
-        res.status(500).json({ error: "Login failed" });
-    }
+        if (!user) return res.status(401).json({ error: "Invalid credentials" });
+        res.json({ message: "Login success", user: { id: user.id || user._id, name: user.name, email: user.email } });
+    } catch (err) { res.status(500).json({ error: "Login failed" }); }
 });
 
-// --- Checkout API ---
-app.post('/api/checkout', (req, res) => {
-    const { method } = req.body;
-    // Simulate payment processing delay
-    setTimeout(async () => {
-        const orderId = `ORD-${Date.now()}`;
-        await pushSignal(`New order ${orderId} placed via ${method}!`);
-        res.json({ success: true, message: `Payment processed successfully via ${method}`, orderId });
-    }, 1500);
+app.get('/api/signals', async (req, res) => {
+    try {
+        const signals = await Signal.find().sort({ time: -1 }).limit(20);
+        res.json(signals);
+    } catch (err) { res.status(500).json({ error: "Failed" }); }
 });
 
-// Health check
-app.get('/', (req, res) => {
-    res.json({ status: 'AhsanShopping API is running!' });
+app.get('/api/users', async (req, res) => {
+    try {
+        const users = await User.find({}, '-password').sort({ createdAt: -1 });
+        res.json(users);
+    } catch (err) { res.status(500).json({ error: "Failed" }); }
 });
 
-// Start server only in local dev (not on Vercel)
+// Health check (Optional: only if needed for internal monitoring)
+// app.get('/api/health', (req, res) => res.json({ status: 'AhsanShopping API is running!' }));
+
 if (process.env.VERCEL !== '1') {
-    app.listen(PORT, () => {
-        console.log(`Server is running at http://localhost:${PORT}`);
-    });
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 }
 
 export default app;
-
