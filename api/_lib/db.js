@@ -37,3 +37,9 @@ const productSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 export const Product = mongoose.models.Product || mongoose.model('Product', productSchema);
+
+const signalSchema = new mongoose.Schema({
+    message: { type: String, required: true },
+    time: { type: Date, default: Date.now }
+});
+export const Signal = mongoose.models.Signal || mongoose.model('Signal', signalSchema);

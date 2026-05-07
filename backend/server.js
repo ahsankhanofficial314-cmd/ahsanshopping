@@ -149,6 +149,24 @@ app.post('/api/auth/login', async (req, res) => {
     } catch (err) { res.status(500).json({ error: "Login failed" }); }
 });
 
+app.post('/api/checkout', async (req, res) => {
+    try {
+        const { cart, method } = req.body;
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        const newSignal = new Signal({
+            message: `New Order: $${total.toFixed(2)} via ${method}`,
+            time: new Date()
+        });
+        await newSignal.save();
+        res.status(200).json({ 
+            success: true, 
+            orderId: "ORD-" + Math.random().toString(36).substr(2, 9).toUpperCase() 
+        });
+    } catch (err) {
+        res.status(500).json({ error: "Checkout failed" });
+    }
+});
+
 app.get('/api/signals', async (req, res) => {
     try {
         const signals = await Signal.find().sort({ time: -1 }).limit(20);
